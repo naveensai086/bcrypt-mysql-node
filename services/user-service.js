@@ -55,7 +55,7 @@ var getUser = async function (req, res) {
 };
 
 
-     
+    
 
 //registration user in database
 var createUser = async function (req, res) {
