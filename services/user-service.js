@@ -1,5 +1,5 @@
 var db = require('../bin/database');
-
+let jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
 
@@ -16,6 +16,13 @@ var getAllusers = function (req, res) {
             res.send(err);
         })
 };
+
+
+
+
+
+
+
 
 // user login 
 var getUser = async function (req, res) {
@@ -34,8 +41,12 @@ var getUser = async function (req, res) {
                 }
                 else{
                     if(match){
-                      
-
+                    let token = jwt.sign({ "body": "nothing" }, "secret", { algorithm: 'HS256'});
+                    res.status(200).send({
+                        Statu_Code : 200,
+                        Message : "Authentication successful ",
+                        token: token
+                    });
 
                     }
                     else{
@@ -55,19 +66,25 @@ var getUser = async function (req, res) {
 };
 
 
+
+
+
+
+
+
     
 
-//registration user in database
+//registration user 
 var createUser = async function (req, res) {
     let FirstName = req.FirstName; let LastName = req.LastName; let Gender = req.Gender;
     let Phone = req.Phone; let Email = req.Email; let DateOfBirth = req.DateOfBirth;
-    let CreatedBy = req.CreatedBy; let CreatedOn = req.CreatedOn; let Password = req.Password;
-    let UpatedBy = req.UpatedBy; let UpatedOn = req.UpatedOn; let IsDeleted = req.IsDeleted;
+    let CreatedBy = req.CreatedBy;  let Password = req.Password;
+    let UpatedBy = req.UpatedBy; 
     let IsAdmin = req.IsAdmin;
     const hash = await bcrypt.hash(Password,salt);
     console.log(hash);
-    let userquery = 'INSERT INTO users (FirstName, LastName,Gender,Phone,Email,DateOfBirth,CreatedBy,CreatedOn,UpatedBy,UpatedOn,IsAdmin,IsDeleted,Password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
-    db.execute(userquery, [FirstName, LastName,Gender,Phone,Email,DateOfBirth,CreatedBy,CreatedOn,UpatedBy,UpatedOn,IsAdmin,IsDeleted,hash])
+    let userquery = 'INSERT INTO users (FirstName, LastName,Gender,Phone,Email,DateOfBirth,CreatedBy,CreatedOn,UpatedBy,UpatedOn,IsAdmin,Password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
+    db.execute(userquery, [FirstName, LastName,Gender,Phone,Email,DateOfBirth,CreatedBy,new Date(),UpatedBy,new Date(),IsAdmin,hash])
         .then(async result => {
             res.status(200).send('registration successful..!!');
         })
