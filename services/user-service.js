@@ -86,10 +86,16 @@ var createUser = async function (req, res) {
     let userquery = 'INSERT INTO users (FirstName, LastName,Gender,Phone,Email,DateOfBirth,CreatedBy,CreatedOn,UpatedBy,UpatedOn,IsAdmin,Password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
     db.execute(userquery, [FirstName, LastName,Gender,Phone,Email,DateOfBirth,CreatedBy,new Date(),UpatedBy,new Date(),IsAdmin,hash])
         .then(async result => {
-            res.status(200).send('registration successful..!!');
+            res.status(200).send({
+                Statu_Code : 200,
+                Message : "Registration successful "
+            });
         })
         .catch(err => {
-            res.status(400).send('Registration failed..!');
+            res.status(400).send({
+                Statu_Code : 400,
+                Message : "Registration failed"
+            });
         });
 };
 

@@ -17,7 +17,6 @@ router.post('/user', function(req, res) {
 
 
 // inseting records
-
 router.post('/users',expressValidator(userSchema.adduserschema), function(req, res) {
    let queryBody = req.body;
    userServices.createUser(queryBody,res);
