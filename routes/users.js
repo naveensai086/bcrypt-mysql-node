@@ -3,7 +3,7 @@ var router = express.Router();
 const expressValidator = require('express-joi-validator');
 const userServices = require('../services/user-service');
 const userSchema = require('../schemas/user_schema');
-
+//const verifyToken = require('../middlewares/verifytoken')
 
 // getting records
 router.get('/users', userServices.getAllusers);
@@ -21,6 +21,15 @@ router.post('/users',expressValidator(userSchema.adduserschema), function(req, r
    let queryBody = req.body;
    userServices.createUser(queryBody,res);
 });
+
+
+//sending questions
+router.get('/users/onlineexam',function(req, res) {          // ,verifyToken.verify
+  userServices.onlineQuestions(req,res);
+});
+
+
+
 
 
 // //update password

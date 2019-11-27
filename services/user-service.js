@@ -19,29 +19,29 @@ var getAllusers = function (req, res) {
 
 
 
-
-
-
+//=========================================================================================================================================
 
 
 // user login 
 var getUser = async function (req, res) {
     let pawd = req.Password;
     Email = req.Email;
-    console.log(pawd,Email);
-    db.execute('SELECT Password FROM users  where Email=?', [Email])
+    //console.log(pawd,Email);
+    db.execute('SELECT IsAdmin,Password FROM users  where Email=?', [Email])
         .then( user => {
                let pwd = JSON.stringify(user[0]);
                let pwd2 = JSON.parse(pwd);
+             //  console.log(pwd2[0]);
                let  hash =  pwd2[0].Password;
-               console.log(hash);
+              // console.log(hash);
+              
                bcrypt.compare(pawd,hash,(err,match)=>{
                 if(err){
                     res.status(404).send(err);
                 }
                 else{
                     if(match){
-                    let token = jwt.sign({ "body": "nothing" }, "secret", { algorithm: 'HS256'});
+                    let token = jwt.sign({ "IsAdmin": pwd2[0].IsAdmin }, "secret", { algorithm: 'HS256'} , { expiresIn: '300s' });
                     res.status(200).send({
                         Statu_Code : 200,
                         Message : "Authentication successful ",
@@ -67,12 +67,9 @@ var getUser = async function (req, res) {
 
 
 
+//========================================================================================================================================
 
-
-
-
-
-    
+  
 
 //registration user 
 var createUser = async function (req, res) {
@@ -98,6 +95,120 @@ var createUser = async function (req, res) {
             });
         });
 };
+
+
+
+//==========================================================================================================================================
+
+
+
+//sending questions
+var onlineQuestions = function (req, res) {
+    let sub = req.query.sub;
+    let final=["questions"]; 
+    let arr=[];  let questions=[];  var options = []; 
+    db.execute('SELECT question,options,marks FROM questions  where sub=?', [sub])
+        .then(result => {
+           // console.log(result);
+            result[0].forEach((q)=>{ 
+                       let obj = {
+                        question:q.question,
+                        options:JSON.parse(q.options),
+                        marks:q.marks
+                    };
+                    questions.push(obj);
+                })
+             let c=1;
+            while(c<50){
+                let b = num1();
+                arr.push(b);
+                c++;
+            };
+         let arr2 = arr.filter((item,index)=>arr.indexOf(item)==index);
+         let id=1;
+         arr2.forEach(e=>{
+            questions[e].Q_No=id;
+            let flag=true;
+            while(flag){
+               if(options.length==4){
+                   flag=false;
+                   break;
+               }
+               else{
+                let h = Math.floor(Math.random() * 4)+1;
+                  if(!options.includes(h)){
+                      options.push(h);
+                  }
+               }
+            }
+           var obj= {};
+          
+            options.forEach((ele,index)=>{
+                obj[`${index+1}`] = questions[e].options[`${ele}`];
+            })
+            questions[e].options = obj;
+             final.push(questions[e]);
+             id++;
+         })       
+            res.send(final);  
+         })
+        .catch(err => {
+            res.send(err);
+        })
+};
+
+
+
+
+// generating random numbers for questions
+function num1(){
+    let a = Math.floor(Math.random() * 10);
+    return a;
+}
+
+
+
+//==========================================================================================================================================
+
+
+
+//validate result
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -171,16 +282,11 @@ var createUser = async function (req, res) {
 module.exports = {
      getAllusers: getAllusers,
     getUser: getUser,
-    createUser: createUser
-    // updateEmployee:updateEmployee,
+    createUser: createUser,
+    onlineQuestions:onlineQuestions,
     // deleteEmployee:deleteEmployee
 
 }
-
-
-
-
-
 
 
 
