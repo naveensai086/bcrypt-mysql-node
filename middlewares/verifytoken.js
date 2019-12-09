@@ -16,7 +16,7 @@ var verify = function tokenVerification (req,res,next){
                     message:"access denied for wrong token "
                 })
             }else{
-                  
+                  console.log(verifiedJwt);
                 if(verifiedJwt.IsAdmin==0){
                     res.status(200).send({
                         status_code:200,

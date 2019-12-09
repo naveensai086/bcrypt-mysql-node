@@ -23,6 +23,22 @@ var createQuestion =  function (req, res) {
         });
 };
 
+//==========================================================================================================================================
+
+//Get All results
+var getResults = function (req, res) {
+    db.execute('SELECT * FROM result')
+        .then(result => {
+            res.send(result[0]);
+        })
+        .catch(err => {
+            res.send(err);
+        })
+};
+
+
+
 module.exports = {
-    createQuestion: createQuestion
+    createQuestion: createQuestion,
+    getResults:getResults
 }

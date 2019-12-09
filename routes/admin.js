@@ -11,7 +11,9 @@ router.post('/admin',verifyToken.verify,expressValidator(adminSchema.addAdminsch
      let queryBody = req.body;
     adminService.createQuestion(queryBody,res);
  });
-
-
+// getting results
+ router.get('/admin',verifyToken.verify, function(req, res) {
+   adminService.getResults(req,res);
+});
 
  module.exports = router;
